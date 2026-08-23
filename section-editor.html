@@ -50,7 +50,7 @@ aside a:hover{color:var(--ink)}
 aside a.off{opacity:.42;text-decoration:line-through}
 aside a.dirty{border-left-color:var(--accent);color:var(--ink)}
 aside a .n{font:600 10.5px/1.5 var(--mono);color:var(--faint);min-width:18px}
-main{padding:22px 26px 200px;max-width:1000px}
+main{padding:22px 26px 200px;max-width:1380px}
 
 /* ------------------------------------------------------------------ cards */
 .grp{display:flex;align-items:center;gap:11px;margin:26px 0 12px}
@@ -83,6 +83,7 @@ main{padding:22px 26px 200px;max-width:1000px}
 .tag.m{background:var(--blue-soft);color:var(--blue);border:1px solid var(--blue-line)}
 .tag.r{background:var(--green-soft);color:var(--green);border:1px solid var(--green-line)}
 .tag.o{background:var(--red-soft);color:var(--red);border:1px solid var(--red-line)}
+.tag.s{background:var(--blue-soft);color:var(--blue);border:1px solid var(--blue-line)}
 .ico{border:1px solid var(--rule);background:var(--bg);border-radius:5px;width:26px;height:26px;
   font:600 12px/1 var(--sans);color:var(--muted);cursor:pointer;padding:0}
 .ico:hover{border-color:var(--faint);color:var(--ink)}
@@ -96,22 +97,29 @@ main{padding:22px 26px 200px;max-width:1000px}
 .body{border-top:1px solid var(--rule-soft);padding:6px 13px 13px}
 .card.closed .body{display:none}
 
-/* Two panes, one grid, so the key column and the raw button stay put whether
-   the left pane is showing or not. Left is the document as it shipped and is
-   never editable; right is yours and is what the plan is cut from. */
-.blkrow{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr) 30px;gap:9px;
+/* Three panes, one grid, so the key column and the raw button stay put
+   whatever is showing. Left is the document as it shipped and is never
+   editable; the middle is the story, told in Romanian, and is the truth;
+   the right is its English translation and is what the plan is cut from.
+   Either of the first two can be hidden for room. */
+.blkrow{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) 30px;gap:9px;
   align-items:start;padding:7px 0;border-bottom:1px solid var(--rule-soft)}
 .blkrow:last-child{border-bottom:0}
 .blkrow .k{font:600 9.5px/1.9 var(--mono);color:var(--faint);text-align:right;padding-top:3px}
 .blkrow .w{min-width:0}
-.blkrow .w.span2{grid-column:2 / span 2}
-.panehd{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr) 30px;gap:9px;
+.blkrow .w.spanfill{grid-column:2 / span 3}
+.panehd{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) 30px;gap:9px;
   font:600 9.5px/1.7 var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--faint);
   padding:3px 0 5px;border-bottom:1px solid var(--rule-soft)}
-.panehd .r2{color:var(--accent)}
-body.solo .blkrow,body.solo .panehd{grid-template-columns:44px minmax(0,1fr) 30px}
-body.solo .orig,body.solo .panehd .r1{display:none}
-body.solo .blkrow .w.span2{grid-column:2}
+.panehd .r2{color:var(--blue)}
+.panehd .r3{color:var(--accent)}
+body.no-orig .blkrow,body.no-orig .panehd{grid-template-columns:44px minmax(0,1fr) minmax(0,1fr) 30px}
+body.no-ro .blkrow,body.no-ro .panehd{grid-template-columns:44px minmax(0,1fr) minmax(0,1fr) 30px}
+body.no-orig.no-ro .blkrow,body.no-orig.no-ro .panehd{grid-template-columns:44px minmax(0,1fr) 30px}
+body.no-orig .orig,body.no-orig .panehd .r1{display:none}
+body.no-ro .blk.ro,body.no-ro .panehd .r2{display:none}
+body.no-orig .blkrow .w.spanfill,body.no-ro .blkrow .w.spanfill{grid-column:2 / span 2}
+body.no-orig.no-ro .blkrow .w.spanfill{grid-column:2}
 .blkrow .raw{border:1px solid var(--rule);background:var(--bg);border-radius:4px;font:600 10px/1 var(--mono);
   color:var(--faint);cursor:pointer;padding:4px 6px;margin-top:3px}
 .blkrow .raw.on{background:var(--ink);border-color:var(--ink);color:#fff}
@@ -123,6 +131,11 @@ body.solo .blkrow .w.span2{grid-column:2}
 .blk.orig{background:#fbfcfd;border-color:var(--rule-soft);color:var(--muted);cursor:default}
 .blk.orig:hover{background:#fbfcfd;border-color:var(--rule-soft)}
 .blk.orig.was{border-left:2px solid var(--faint)}
+.blk.ro{background:#fcfdff;border-color:var(--rule-soft)}
+.blk.ro:hover{border-color:var(--blue-line)}
+.blk.ro:focus{border-color:var(--blue);background:var(--blue-soft)}
+.blk.ro.has{border-left:2px solid var(--blue)}
+.blk.ro:empty::before{content:"\2014 povestea \2014";color:var(--faint);font-style:italic}
 .blk p,.blk ul,.blk ol{margin:0 0 9px}
 .blk p:last-child,.blk ul:last-child,.blk ol:last-child{margin-bottom:0}
 .blk.t-p{font-size:15px}
@@ -166,13 +179,16 @@ textarea.rawbox:focus{outline:0}
   <button class="chip on" data-f="all">All</button>
   <button class="chip" data-f="changed">Changed</button>
   <button class="chip" data-f="off">Off</button>
-  <button class="chip on" id="btnpane" title="show or hide the frozen original">Two panes</button>
+  <button class="chip on" id="btnorig" title="show or hide the frozen original">Shipped</button>
+  <button class="chip on" id="btnro" title="show or hide the story pane">Story</button>
   <div class="spacer"></div>
   <button class="btn" id="btnlink" title="Autosave straight into site/">&#9955; Link file</button>
   <span class="savest" id="savest"></span>
   <button class="btn" id="btnreset">Reset</button>
+  <button class="btn" id="btnimp" title="load a plan JSON back into the editor">Import .json</button>
   <button class="btn" id="btndl">Download .json</button>
   <button class="btn primary" id="btncopy">Copy JSON</button>
+  <input type="file" id="impfile" accept=".json,application/json" style="display:none">
 </div>
 
 <div class="cols">
@@ -185,10 +201,16 @@ textarea.rawbox:focus{outline:0}
       <p style="margin:0 0 8px"><b>The dashed blue card is the part boundary.</b> Sections above it are the argument,
       in the first column of the page; sections below it are the build documentation, after the mid-page title
       block and the credits. Drag it to move the seam.</p>
-      <p style="margin:0 0 8px"><b>Two panes, identical when you open this.</b> The left is the document
-      as v2026-08-23 shipped and cannot be typed into; the right is yours, and the right is what the plan is
-      cut from. A block you have changed is marked on both sides. <b>Two panes</b> in the bar hides the
-      left one when you want the room.</p>
+      <p style="margin:0 0 8px"><b>Three panes.</b> The left is the document as v2026-08-23 shipped and
+      cannot be typed into. The middle is <b>the story, in Romanian &mdash; the truth</b>: what the
+      document must mean, told plainly; it starts empty. The right is the English translation of that
+      truth, starts as the shipped text, and is <b>what the plan is cut from</b> &mdash; the document
+      ships the right pane, and the story rides beside it in the export as the record of what it means.
+      <b>Shipped</b> and <b>Story</b> in the bar hide their panes when you want the room.</p>
+      <p style="margin:0 0 8px"><b>The translation loop.</b> Tell the story in the middle pane (or in
+      chat) and export; the translation pass fills the right panes and hands back a JSON;
+      <b>Import .json</b> loads it here for correction. Import replaces the editor's state with the
+      file's &mdash; export first if you have unexported work.</p>
       <p style="margin:0 0 8px"><b>Prose is editable in place.</b> <kbd>Enter</kbd> is suppressed inside a paragraph
       or heading, because one block is one element &mdash; use <kbd>Shift</kbd>+<kbd>Enter</kbd> for a line break, or
       <b>&lt;/&gt;</b> to edit that block's raw HTML. Tables, code blocks, figures and inline SVG are
@@ -222,6 +244,13 @@ function blk(id, i){
   if(r && r.blocks && r.blocks[i] !== undefined) return r.blocks[i];
   return DATA.sections[id].blocks[i].html;
 }
+/* The story pane. There is no default to fall back to — the document ships
+   no Romanian — so an untold block reads as the empty string. */
+function ro(id, i){
+  var r = state.sec[id];
+  if(r && r.ro && r.ro[i] !== undefined) return r.ro[i];
+  return '';
+}
 /* Contents headings hang off a section id rather than a position, so moving a
    section carries its heading with it and apply-sections.py renumbers both
    under the same map. */
@@ -252,10 +281,11 @@ function dirty(id){
   if(r.title !== undefined && r.title !== DATA.sections[id].title) d.renamed = 1;
   if(r.include === false) d.off = 1;
   if(r.blocks) for(var k in r.blocks){ if(r.blocks[k] !== DATA.sections[id].blocks[k].html){ d.edited = 1; break; } }
+  if(r.ro) for(var k2 in r.ro){ if(r.ro[k2] !== ''){ d.storied = 1; break; } }
   if(state.order.indexOf(id) !== ORIG.indexOf(id)) d.moved = 1;
   return d;
 }
-function anyDirty(id){ var d = dirty(id); return !!(d.renamed || d.off || d.edited || d.moved); }
+function anyDirty(id){ var d = dirty(id); return !!(d.renamed || d.off || d.edited || d.moved || d.storied); }
 
 /* ---------------------------------------------------------------- cleaning
    contenteditable leaves the browser's fingerprints behind: style attributes
@@ -312,7 +342,8 @@ function updateCount(){
   document.getElementById('count').textContent =
     live().filter(function(i){ return i !== '--part--'; }).length + ' sections \u00b7 ' +
     state.order.filter(function(i){ return i !== '--part--' && !on(i); }).length + ' off \u00b7 ' +
-    state.order.filter(function(i){ return i !== '--part--' && anyDirty(i); }).length + ' changed';
+    state.order.filter(function(i){ return i !== '--part--' && anyDirty(i); }).length + ' changed \u00b7 ' +
+    state.order.filter(function(i){ return i !== '--part--' && dirty(i).storied; }).length + ' storied';
 }
 
 function partCard(idx){
@@ -349,6 +380,7 @@ function card(id, idx, pos){
   function tags(){
     var d2 = dirty(id);
     tg.innerHTML = (d2.edited ? '<span class="tag e">edited</span>' : '') +
+                   (d2.storied ? '<span class="tag s">storied</span>' : '') +
                    (d2.renamed ? '<span class="tag r">renamed</span>' : '') +
                    (d2.moved ? '<span class="tag m">moved</span>' : '') +
                    (d2.off ? '<span class="tag o">off</span>' : '');
@@ -375,7 +407,8 @@ function card(id, idx, pos){
     var ph = document.createElement('div');
     ph.className = 'panehd';
     ph.innerHTML = '<div></div><div class="r1">as shipped &middot; v' + DATA.release +
-                   '</div><div class="r2">yours &middot; the source of truth</div><div></div>';
+                   '</div><div class="r2">povestea &middot; Romanian &mdash; the truth</div>' +
+                   '<div class="r3">the translation &middot; what the document ships</div><div></div>';
     body.appendChild(ph);
   }
   s.blocks.forEach(function(b){
@@ -385,9 +418,9 @@ function card(id, idx, pos){
     row.appendChild(k);
     var w = document.createElement('div'); w.className = 'w';
     if(!b.editable){
-      /* Held: one line, spanning both panes. There is nothing to compare and
+      /* Held: one line, spanning the panes. There is nothing to compare and
          nothing to edit — a command is not prose. */
-      w.className = 'w span2';
+      w.className = 'w spanfill';
       w.innerHTML = '<div class="held"><b>' + b.tag + '</b> &middot; ' + esc(b.summary) + '</div>';
       row.appendChild(w);
       row.appendChild(document.createTextNode(''));
@@ -398,6 +431,30 @@ function card(id, idx, pos){
       o.setAttribute('contenteditable', 'false');
       o.title = 'the document as it shipped — read only';
       row.appendChild(o);
+
+      var s2 = document.createElement('div');
+      s2.className = 'blk ro ' + klass(b);
+      s2.contentEditable = 'true'; s2.spellcheck = false;
+      s2.innerHTML = ro(id, b.i);
+      if(ro(id, b.i) !== '') s2.classList.add('has');
+      s2.title = 'povestea, in Romanian — the truth this block must say';
+      s2.oninput = function(){
+        var r = rec(id); r.ro = r.ro || {};
+        var v = clean(this.innerHTML);
+        if(v === '') delete r.ro[b.i]; else r.ro[b.i] = v;
+        this.classList.toggle('has', v !== '');
+        save(); tags(); updateCount(); buildRail();
+      };
+      s2.onkeydown = function(ev){
+        if(ev.key !== 'Enter' || b.tag === 'ul' || b.tag === 'ol' || b.tag === 'div') return;
+        ev.preventDefault();
+        if(ev.shiftKey) document.execCommand('insertHTML', false, '<br>');
+      };
+      s2.onpaste = function(ev){
+        ev.preventDefault();
+        document.execCommand('insertText', false, (ev.clipboardData || window.clipboardData).getData('text'));
+      };
+      row.appendChild(s2);
 
       var e = document.createElement('div');
       e.className = 'blk ' + klass(b);
@@ -430,7 +487,7 @@ function card(id, idx, pos){
     body.appendChild(row);
   });
   if(!s.blocks.length){
-    body.innerHTML = '<div class="blkrow"><div class="k"></div><div class="w"><div class="held">empty section</div></div></div>';
+    body.innerHTML = '<div class="blkrow"><div class="k"></div><div class="w spanfill"><div class="held">empty section</div></div></div>';
   }
   c.appendChild(body);
   wire(c);
@@ -540,17 +597,30 @@ function snapshot(){
   var pos = 0;
   state.order.forEach(function(id){
     if(id === '--part--') return;
-    if(!on(id)){ out.sections[id] = {include: false}; return; }
+    var r = state.sec[id], roMap = null;
+    if(r && r.ro){
+      var m = {};
+      for(var k0 in r.ro){ if(r.ro[k0] !== '') m[k0] = r.ro[k0]; }
+      if(Object.keys(m).length) roMap = m;
+    }
+    if(!on(id)){
+      /* The story survives a switched-off section: the plan is also the
+         record of what was told, and apply-sections.py ignores ro anyway. */
+      var off = {include: false};
+      if(roMap) off.ro = roMap;
+      out.sections[id] = off;
+      return;
+    }
     pos++;
     var g = groupAt(id);
     if(g) out.groups.push({at: id, label: g});
     var e = {title: title(id), include: true};
-    var r = state.sec[id];
     if(r && r.blocks){
       var b = {};
       for(var k in r.blocks){ if(r.blocks[k] !== DATA.sections[id].blocks[k].html) b[k] = r.blocks[k]; }
       if(Object.keys(b).length) e.blocks = b;
     }
+    if(roMap) e.ro = roMap;
     out.sections[id] = e;
   });
   return out;
@@ -638,24 +708,78 @@ document.getElementById('btncopy').onclick = function(){
   }
 };
 document.getElementById('btnreset').onclick = function(){
-  if(!confirm('Throw away every reorder, retitle and edit?')) return;
+  if(!confirm('Throw away every reorder, retitle, story and edit?')) return;
   state = {order: DATA.order.slice(), sec: {}};
   try{ localStorage.removeItem(KEY); }catch(e){}
   save(); render();
 };
-document.getElementById('btnpane').onclick = function(){
-  var solo = document.body.classList.toggle('solo');
-  this.classList.toggle('on', !solo);
-  try{ localStorage.setItem(KEY + '-solo', solo ? '1' : ''); }catch(e){}
-};
-try{
-  if(localStorage.getItem(KEY + '-solo')){
-    document.body.classList.add('solo');
-    document.getElementById('btnpane').classList.remove('on');
-  }
-}catch(e){}
 
-Array.prototype.forEach.call(document.querySelectorAll('.chip:not(#btnpane)'), function(ch){
+/* Import: a plan JSON written elsewhere — the translation pass — becomes the
+   editor's state, replacing it whole. The same two fingerprints apply-
+   sections.py refuses on are confirmed here, softly: block numbers are
+   per-document, so a plan from another index.html may edit other text. */
+function importPlan(o){
+  if(!o || o.tool !== 'section-editor' || !o.order || !o.sections){ toast('Not a section plan'); return; }
+  if((o.index_sha && o.index_sha !== DATA.index_sha) ||
+     (o.blocks_sha && o.blocks_sha !== DATA.blocks_sha)){
+    if(!confirm('This plan was cut from a different index.html or block structure.\n' +
+                'Its block numbers may point at other paragraphs here. Import anyway?')) return;
+  }
+  var known = {};
+  DATA.order.forEach(function(i){ known[i] = 1; });
+  var st = {order: [], sec: {}, groups: {}};
+  o.order.forEach(function(i){ if(known[i]){ st.order.push(i); delete known[i]; } });
+  DATA.order.forEach(function(i){ if(known[i]) st.order.push(i); });  /* nothing is lost */
+  DATA.order.forEach(function(id){
+    if(id === '--part--') return;
+    var p = o.sections[id];
+    if(!p) return;
+    var r = {};
+    if(p.include === false) r.include = false;
+    if(p.title !== undefined) r.title = p.title;
+    if(p.blocks) r.blocks = p.blocks;
+    if(p.ro) r.ro = p.ro;
+    if(Object.keys(r).length) st.sec[id] = r;
+  });
+  var listed = {};
+  (o.groups || []).forEach(function(g){ listed[g.at] = g.label; });
+  DATA.groups.forEach(function(g){ if(listed[g.at] === undefined) st.groups[g.at] = ''; });
+  for(var at in listed) st.groups[at] = listed[at];
+  state = st;
+  save(); render();
+  toast('Plan imported');
+}
+document.getElementById('btnimp').onclick = function(){ document.getElementById('impfile').click(); };
+document.getElementById('impfile').onchange = function(){
+  var f = this.files && this.files[0];
+  this.value = '';
+  if(!f) return;
+  var rd = new FileReader();
+  rd.onload = function(){
+    var o = null;
+    try{ o = JSON.parse(rd.result); }catch(err){ toast('That file is not JSON'); return; }
+    importPlan(o);
+  };
+  rd.readAsText(f);
+};
+
+function paneChip(btn, cls, key){
+  btn.onclick = function(){
+    var off = document.body.classList.toggle(cls);
+    btn.classList.toggle('on', !off);
+    try{ localStorage.setItem(KEY + key, off ? '1' : ''); }catch(e){}
+  };
+  try{
+    if(localStorage.getItem(KEY + key)){
+      document.body.classList.add(cls);
+      btn.classList.remove('on');
+    }
+  }catch(e){}
+}
+paneChip(document.getElementById('btnorig'), 'no-orig', '-noorig');
+paneChip(document.getElementById('btnro'), 'no-ro', '-noro');
+
+Array.prototype.forEach.call(document.querySelectorAll('.chip:not(#btnorig):not(#btnro)'), function(ch){
   ch.onclick = function(){
     Array.prototype.forEach.call(document.querySelectorAll('.chip[data-f]'), function(o){ o.classList.remove('on'); });
     ch.classList.add('on'); filter = ch.dataset.f; render();
