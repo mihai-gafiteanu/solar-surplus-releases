@@ -1,0 +1,50 @@
+# Every push to main serves this repo's root as the site, through GitHub
+# Pages' artifact path — no Jekyll, no branch juggling, and no Azure:
+# the subscription-shaped failure mode died with the move (v2.42 of the
+# software repo records the separation). configure-pages enables Pages
+# on first run, so serving this site is: push.
+#
+# The gate rides in front: verify.py loads the page in a real browser
+# under the meta CSP and fails the deploy on any violation, dead anchor,
+# undecoded image or contents-list mismatch — the same judgement the old
+# check.yml passed, now owned by the repo that owns the page.
+name: pages
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install playwright and its Chromium
+        run: |
+          pip install playwright
+          playwright install --with-deps chromium
+      - name: The page under a real browser and its own meta CSP
+        run: python3 tools/verify.py
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4
