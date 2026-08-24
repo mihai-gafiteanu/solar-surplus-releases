@@ -1034,6 +1034,41 @@ sudo python3 /usr/lib/solar-surplus/files/maintenance-backup.py --restore key</p
 </div>
 <div class="pass"><b>Pass ·</b> <code>482 passed, 0 failed</code> — the count grows with the releases; the zero is the number that matters.</div>
 
+
+<h2><span class="sn">Section 13</span><span class="tt">The board</span></h2>
+<p class="lede">Everything this build measures lands on one Grafana screen — 68 panels, nothing collapsed, nothing behind a scrollbar. One glance answers three questions: what is the car doing, is the Pi well, and what did the night's window do.</p>
+
+<p>The board lives at <code>http://PI_IP:3000</code>; the login is the <b>Grafana admin</b> entry from the installer's KeePass file. It ships with every release and is generated — a script in the repository writes it, the installer imports it, no hand edits the result — and it has no version of its own: the title is stamped with the release it arrived with, so the screen says which release this Pi is actually running, and an update that has landed announces itself in the title. The layout was ruled panel by panel over grid mocks, and everything stands on one lattice: the Pi's own surface fills the left two thirds, every timeframed trace stacks in a rail beside it, and the charging story runs full width below both.</p>
+
+<p>The Pi surface opens with the vitals — temperature, CPU and load in one row; memory and both disks in the next: the card, and the history disk the readings live on. Under them, three small readings that earn their place: uptime as an hh:mm clock — seconds are noise at that magnitude — the hour the versions were last checked, and the age of the last voltage point, where seconds <em>are</em> the signal: the logger writes every 15&nbsp;s, so that tile goes yellow at a minute of silence and red at five. Then the throttle quartet — power supply and CPU throttling, <em>now</em> beside <em>since boot</em> — four cells that stay green until the firmware has seen trouble, so a brownout that healed still leaves its mark until the next reboot.</p>
+
+<p>Below them, the day's business. Two buttons stand directly over the log their presses feed: <em>Do the needful</em> runs the whole maintenance window on demand — backup, update ladder, guarded reboot, exactly what the 22:30 timer starts — and <em>Clear log</em> restarts the view from a grey marker row, hiding rows, deleting nothing. Both confirm first, each dialog says its consequence out loud, and the Pi refuses a second press while a window is already running. The <em>Maintenance details</em> table under them shows tonight, never last night: its window is 21 hours — young enough that yesterday's rows are out of frame by evening, old enough that a morning glance still shows the whole evening. Beside the log, a stack: the car's charge at its head, then the BLE proxy — the command path; with it down, evcc can see the car but cannot tell it anything — the headline <em>Updates — am I fine?</em>, the versions strip, and the container table, whose footer counts its own rows.</p>
+
+<div class="note green">
+  <span class="h">A well machine reads green and says little</span>
+  <p>Two tables that fill twelve rows on a night when nothing happened are an activity log, not a state. The headline counts only what needs you — a major update waiting for its deliberate yes, a refusal, a failure — and on a good night the details table carries the window's own three rows and nothing else. Zero is the normal answer, and it reads green: <em>Up to date</em>.</p>
+</div>
+
+<p>Every timeframed trace sits in the right-hand rail, one under another: availability first, its response time directly under it, the network pair, the vitals with each per-container trace beside its whole-machine twin, and the disk story last. Nothing hides in a collapsed row — the rail is as tall as the surface beside it, and the two end on the same line.</p>
+
+<p>Below both, the charging half opens with a banner the full width of the board: is the car drawing, and from what? evcc exports no connected-or-charging flag, so the banner derives its answer from flows evcc provably writes — power above the 50&nbsp;W standby floor is charging, split into <em>PV surplus</em>, <em>mixed</em> or <em>grid</em> by the share of it that is green; current offered with no draw yet is the charger enabled and waiting; everything else is idle. What the flows cannot tell apart — a car unplugged, or plugged in and held for surplus — the label says plainly instead of guessing.</p>
+
+<p>Under the banner, the live power flow diagram, and beside it eight energy tiles in three columns — the sun, the loads, the grid, each column one energy's story told top to bottom. Six are measured; two are derived, and each stands under the very tiles it is made of, the way a sum is written on paper: <em>Total consumption · today</em> closes the column carrying the house and the car, <em>Net grid · today</em> closes the one carrying import and export. Both are computed from the same readings as the tiles above them, never from the rounded figures on screen, so eye arithmetic and tile agree to the digit. Two bar charts count the last fourteen days, every day cut at the household's own midnight, never UTC's; then the phase tiles — the charger's saying <em>not charging</em> rather than a bare dash between sessions — and every time-based chart in one full-width stack whose pinned legends keep the hour gridlines on one vertical line down the block.</p>
+
+<div class="tw" tabindex="0">
+<table>
+<caption>What one glance answers</caption>
+<thead><tr><th scope="col" style="width:42%">The question</th><th scope="col">Where the answer stands</th></tr></thead>
+<tbody>
+<tr><td>Is the car charging, and on what energy</td><td>The banner across the top of the charging half</td></tr>
+<tr><td>Where is the car, and can it be commanded</td><td>The charge tile and the BLE proxy, at the head of the update stack</td></tr>
+<tr><td>Is the Pi well</td><td>The vitals, the throttle quartet, and the rail's traces</td></tr>
+<tr><td>Did last night run</td><td>Maintenance details — a full table is tonight's window; an empty one means it has not run yet</td></tr>
+<tr><td>Am I up to date</td><td>Updates — am I fine? Green means nothing to answer; orange means the strip below names what waits for you</td></tr>
+</tbody>
+</table>
+</div>
+
 </div>
 </main>
 </div>
